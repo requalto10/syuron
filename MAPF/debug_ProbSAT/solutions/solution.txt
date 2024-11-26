@@ -1,0 +1,28 @@
+
+c instance name       :  ../cnfs/20240718_172945.cnf
+c number of variables :  14
+c number of literals  :  28
+c number of clauses   :  20
+c max. clause length  :  4
+
+c probSAT parameteres: 
+c using:              : only break          
+c using:              : exponential function
+c cb                  : 2.850000
+c function:           : probsBreak[break]*probsMake[make] = pow(cb, -break);
+c using:              : caching of break values
+
+c general parameteres: 
+c maxTries            : 9223372036854775807
+c maxFlips            : 9223372036854775807
+c seed                : 1721291480
+c -->Starting solver  : 
+
+c EndStatistics:
+c numFlips                      : 8        
+c avg. flips/variable           : 0.57    
+c avg. flips/clause             : 0.40    
+c flips/sec                     : inf     
+c CPU Time                      : 0.0000  
+s SATISFIABLE
+v 1 -2 -3 -4 5 6 -7 8 9 -10 -11 12 -13 -14 

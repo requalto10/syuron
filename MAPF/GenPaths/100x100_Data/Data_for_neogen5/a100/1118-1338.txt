@@ -1,0 +1,157 @@
+# グリッドサイズとエージェント数の設定
+n = m = 100
+a = 100
+
+# パラメータの設定
+k = 10           # スコアの閾値
+time_limit = 150  # Time = 0 ~ 150 の範囲のみを描画
+num_solve = 20     # 経路探索の実行回数
+d = 3             # 距離の閾値
+constant = 1      # スコア計算時の定数
+
+
+Agent Start and Goal Positions:
+Agent 1: Start (83, 26), Goal (59, 68)
+Agent 2: Start (80, 75), Goal (85, 78)
+Agent 3: Start (94, 32), Goal (73, 46)
+Agent 4: Start (57, 27), Goal (89, 47)
+Agent 5: Start (77, 71), Goal (27, 4)
+Agent 6: Start (86, 69), Goal (28, 36)
+Agent 7: Start (95, 86), Goal (20, 27)
+Agent 8: Start (45, 13), Goal (69, 87)
+Agent 9: Start (51, 12), Goal (4, 89)
+Agent 10: Start (94, 0), Goal (98, 11)
+Agent 11: Start (68, 92), Goal (9, 99)
+Agent 12: Start (63, 78), Goal (41, 2)
+Agent 13: Start (34, 40), Goal (45, 87)
+Agent 14: Start (60, 87), Goal (30, 38)
+Agent 15: Start (57, 57), Goal (97, 93)
+Agent 16: Start (45, 25), Goal (75, 52)
+Agent 17: Start (50, 56), Goal (64, 51)
+Agent 18: Start (93, 46), Goal (28, 5)
+Agent 19: Start (23, 94), Goal (67, 30)
+Agent 20: Start (31, 56), Goal (48, 2)
+Agent 21: Start (60, 14), Goal (95, 94)
+Agent 22: Start (29, 34), Goal (73, 95)
+Agent 23: Start (11, 56), Goal (89, 81)
+Agent 24: Start (50, 92), Goal (18, 81)
+Agent 25: Start (56, 86), Goal (7, 76)
+Agent 26: Start (63, 51), Goal (80, 71)
+Agent 27: Start (31, 41), Goal (92, 92)
+Agent 28: Start (41, 64), Goal (15, 0)
+Agent 29: Start (35, 78), Goal (42, 30)
+Agent 30: Start (40, 60), Goal (79, 8)
+Agent 31: Start (86, 8), Goal (64, 84)
+Agent 32: Start (81, 33), Goal (74, 37)
+Agent 33: Start (66, 15), Goal (33, 28)
+Agent 34: Start (44, 51), Goal (48, 25)
+Agent 35: Start (50, 30), Goal (41, 26)
+Agent 36: Start (53, 41), Goal (15, 7)
+Agent 37: Start (94, 65), Goal (34, 6)
+Agent 38: Start (2, 81), Goal (99, 18)
+Agent 39: Start (73, 89), Goal (76, 33)
+Agent 40: Start (31, 31), Goal (76, 53)
+Agent 41: Start (96, 8), Goal (46, 96)
+Agent 42: Start (9, 64), Goal (52, 94)
+Agent 43: Start (97, 2), Goal (12, 64)
+Agent 44: Start (21, 24), Goal (54, 52)
+Agent 45: Start (46, 2), Goal (41, 38)
+Agent 46: Start (69, 72), Goal (94, 91)
+Agent 47: Start (56, 75), Goal (47, 90)
+Agent 48: Start (86, 47), Goal (17, 73)
+Agent 49: Start (7, 75), Goal (64, 92)
+Agent 50: Start (29, 74), Goal (50, 19)
+Agent 51: Start (16, 28), Goal (57, 58)
+Agent 52: Start (86, 59), Goal (33, 3)
+Agent 53: Start (36, 31), Goal (92, 63)
+Agent 54: Start (52, 65), Goal (52, 54)
+Agent 55: Start (4, 82), Goal (51, 14)
+Agent 56: Start (89, 56), Goal (92, 56)
+Agent 57: Start (39, 74), Goal (42, 83)
+Agent 58: Start (78, 34), Goal (87, 47)
+Agent 59: Start (49, 42), Goal (30, 36)
+Agent 60: Start (96, 20), Goal (74, 60)
+Agent 61: Start (30, 56), Goal (13, 38)
+Agent 62: Start (21, 69), Goal (49, 34)
+Agent 63: Start (38, 21), Goal (0, 27)
+Agent 64: Start (61, 68), Goal (29, 86)
+Agent 65: Start (73, 7), Goal (25, 8)
+Agent 66: Start (37, 78), Goal (3, 51)
+Agent 67: Start (58, 36), Goal (90, 71)
+Agent 68: Start (66, 26), Goal (60, 73)
+Agent 69: Start (45, 44), Goal (18, 90)
+Agent 70: Start (64, 23), Goal (4, 45)
+Agent 71: Start (9, 62), Goal (83, 90)
+Agent 72: Start (41, 87), Goal (94, 88)
+Agent 73: Start (92, 22), Goal (44, 14)
+Agent 74: Start (9, 1), Goal (26, 39)
+Agent 75: Start (4, 41), Goal (19, 66)
+Agent 76: Start (45, 64), Goal (46, 12)
+Agent 77: Start (38, 16), Goal (53, 73)
+Agent 78: Start (88, 28), Goal (43, 92)
+Agent 79: Start (81, 59), Goal (70, 30)
+Agent 80: Start (11, 62), Goal (96, 62)
+Agent 81: Start (9, 10), Goal (97, 77)
+Agent 82: Start (61, 29), Goal (88, 46)
+Agent 83: Start (16, 29), Goal (38, 70)
+Agent 84: Start (65, 23), Goal (2, 82)
+Agent 85: Start (68, 13), Goal (57, 23)
+Agent 86: Start (48, 40), Goal (68, 69)
+Agent 87: Start (93, 30), Goal (96, 83)
+Agent 88: Start (68, 5), Goal (41, 27)
+Agent 89: Start (10, 67), Goal (69, 0)
+Agent 90: Start (33, 21), Goal (41, 52)
+Agent 91: Start (45, 8), Goal (15, 61)
+Agent 92: Start (72, 49), Goal (35, 25)
+Agent 93: Start (3, 87), Goal (69, 38)
+Agent 94: Start (89, 10), Goal (55, 82)
+Agent 95: Start (28, 31), Goal (7, 49)
+Agent 96: Start (58, 78), Goal (62, 28)
+Agent 97: Start (23, 11), Goal (96, 6)
+Agent 98: Start (11, 53), Goal (51, 50)
+Agent 99: Start (12, 65), Goal (39, 28)
+Agent 100: Start (6, 65), Goal (36, 14)
+
+--- Run 1 ---
+
+--- Run 2 ---
+
+--- Run 3 ---
+
+--- Run 4 ---
+
+--- Run 5 ---
+
+--- Run 6 ---
+
+--- Run 7 ---
+
+--- Run 8 ---
+
+--- Run 9 ---
+
+--- Run 10 ---
+
+--- Run 11 ---
+
+--- Run 12 ---
+
+--- Run 13 ---
+
+--- Run 14 ---
+
+--- Run 15 ---
+
+--- Run 16 ---
+
+--- Run 17 ---
+
+--- Run 18 ---
+
+--- Run 19 ---
+
+--- Run 20 ---
+
+Total number of segments (num_all_seg): 15000
+Number of anonymous segments (num_anony_seg): 59
+Data residual rate: 0.3933%
