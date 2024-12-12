@@ -1,0 +1,149 @@
+# グリッドサイズとエージェント数の設定
+n = m = 120
+a = 100
+
+# パラメータの設定
+k_values = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 3, 4, 5, 6, 7, 8, 9, 10}  # スコアの閾値のリスト
+time_limit = 200  # Time = 0 ~ 200 の範囲のみを描画
+num_solve = 1000     # 経路探索の実行回数
+d = 3             # 距離の閾値
+constant = 1      # スコア計算時の定数
+
+
+
+For k = 0.1:
+Data residual rate: 89.2400%
+
+
+For k = 0.2:
+Data residual rate: 88.1300%
+
+
+For k = 0.3:
+Data residual rate: 82.4600%
+
+
+For k = 0.4:
+Data residual rate: 77.3550%
+
+
+For k = 0.5:
+Data residual rate: 72.9650%
+
+
+For k = 0.6:
+Data residual rate: 70.0750%
+
+
+For k = 0.7:
+Data residual rate: 67.2950%
+
+
+For k = 0.8:
+Data residual rate: 61.9150%
+
+
+For k = 0.9:
+Data residual rate: 58.3900%
+
+
+For k = 1:
+Data residual rate: 49.7000%
+
+
+For k = 1.1:
+Data residual rate: 26.0250%
+
+
+For k = 1.2:
+Data residual rate: 21.0600%
+
+
+For k = 1.3:
+Data residual rate: 14.6750%
+
+
+For k = 1.4:
+Data residual rate: 10.4350%
+
+
+For k = 1.5:
+Data residual rate: 9.1950%
+
+
+For k = 1.6:
+Data residual rate: 8.1900%
+
+
+For k = 1.7:
+Data residual rate: 6.2450%
+
+
+For k = 1.8:
+Data residual rate: 5.6700%
+
+
+For k = 1.9:
+Data residual rate: 4.5150%
+
+
+For k = 2:
+Data residual rate: 3.6400%
+
+
+For k = 3:
+Data residual rate: 0.9600%
+
+
+For k = 4:
+Data residual rate: 0.5450%
+
+
+For k = 5:
+Data residual rate: 0.2950%
+
+
+For k = 6:
+Data residual rate: 0.2650%
+
+
+For k = 7:
+Data residual rate: 0.2600%
+
+
+For k = 8:
+Data residual rate: 0.2450%
+
+
+For k = 9:
+Data residual rate: 0.2400%
+
+
+For k = 10:
+Data residual rate: 0.2400%
+
+
+経路探索の処理時間: 618.180000 秒
+匿名化処理の処理時間: 5.103000 秒
+
+合計処理時間: 623.285000 秒
+
+--- Run 1 ---
+
+--- Run 101 ---
+
+--- Run 201 ---
+
+--- Run 301 ---
+
+--- Run 401 ---
+
+--- Run 501 ---
+
+--- Run 601 ---
+
+--- Run 701 ---
+
+--- Run 801 ---
+
+--- Run 901 ---
