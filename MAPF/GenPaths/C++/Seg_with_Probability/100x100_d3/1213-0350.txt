@@ -1,0 +1,205 @@
+# グリッドサイズとエージェント数の設定
+n = m = 100
+a = 400
+
+# パラメータの設定
+k_values = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 3, 4, 5, 6, 7, 8, 9, 10}  # スコアの閾値のリスト
+time_limit = 200  # Time = 0 ~ 200 の範囲のみを描画
+num_solve = 1000     # 経路探索の実行回数
+d = 3             # 距離の閾値
+constant = 1      # スコア計算時の定数
+
+
+
+For k = 0.1:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 24689
+Data residual rate: 35.4727%
+
+
+For k = 0.2:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 20933
+Data residual rate: 30.0761%
+
+
+For k = 0.3:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 5185
+Data residual rate: 7.4497%
+
+
+For k = 0.4:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 2564
+Data residual rate: 3.6839%
+
+
+For k = 0.5:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 1696
+Data residual rate: 2.4368%
+
+
+For k = 0.6:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 1255
+Data residual rate: 1.8032%
+
+
+For k = 0.7:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 925
+Data residual rate: 1.3290%
+
+
+For k = 0.8:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 785
+Data residual rate: 1.1279%
+
+
+For k = 0.9:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 732
+Data residual rate: 1.0517%
+
+
+For k = 1:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 688
+Data residual rate: 0.9885%
+
+
+For k = 1.1:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 675
+Data residual rate: 0.9698%
+
+
+For k = 1.2:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 664
+Data residual rate: 0.9540%
+
+
+For k = 1.3:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 658
+Data residual rate: 0.9454%
+
+
+For k = 1.4:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 1.5:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 1.6:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 1.7:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 1.8:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 1.9:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 2:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 3:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 4:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 5:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 656
+Data residual rate: 0.9425%
+
+
+For k = 6:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 638
+Data residual rate: 0.9167%
+
+
+For k = 7:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 590
+Data residual rate: 0.8477%
+
+
+For k = 8:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 548
+Data residual rate: 0.7874%
+
+
+For k = 9:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 500
+Data residual rate: 0.7184%
+
+
+For k = 10:
+Total number of segments (num_all_seg): 69600
+Number of anonymous segments (num_anony_seg): 400
+Data residual rate: 0.5747%
+
+
+経路探索の処理時間: 1028.690000 秒
+匿名化処理の処理時間: 24.334000 秒
+
+合計処理時間: 1053.025000 秒
+
+--- Run 1 ---
+
+--- Run 101 ---
+
+--- Run 201 ---
+
+--- Run 301 ---
+
+--- Run 401 ---
+
+--- Run 501 ---
+
+--- Run 601 ---
+
+--- Run 701 ---
+
+--- Run 801 ---
+
+--- Run 901 ---
