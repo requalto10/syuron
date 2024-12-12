@@ -16,14 +16,14 @@
 using namespace std;
 
 // グリッドサイズとエージェント数の設定
-const int n = 80;
-const int m = 80;
-const int a = 100;
+const int n = 100;
+const int m = 100;
+const int a = 300;
 
 // パラメータの設定
 vector<int> k_values = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; // スコア閾値を%で指定
 const int time_limit = 200;   // Time = 0 ~ 200 の範囲のみを描画
-const int num_solve = 100;     // 経路探索の実行回数
+const int num_solve = 10;     // 経路探索の実行回数
 const int d = 3;              // 距離の閾値
 const double constant = 1.0;  // スコア計算時の定数
 
@@ -195,16 +195,16 @@ int main() {
     cout << param_info.str();
     output_lines.push_back(param_info.str());
 
-    // // エージェントの情報を詳細出力に保存
-    // cout << "Agent Start and Goal Positions:" << endl;
-    // detail_output_lines.push_back("Agent Start and Goal Positions:");
-    // for (int i = 0; i < a; ++i) {
-    //     stringstream agent_info;
-    //     agent_info << "Agent " << i + 1 << ": Start (" << agent_starts[i].first << ", " << agent_starts[i].second
-    //                << "), Goal (" << agent_goals[i].first << ", " << agent_goals[i].second << ")";
-    //     cout << agent_info.str() << endl;
-    //     detail_output_lines.push_back(agent_info.str());
-    // }
+    // エージェントの情報を詳細出力に保存
+    cout << "Agent Start and Goal Positions:" << endl;
+    detail_output_lines.push_back("Agent Start and Goal Positions:");
+    for (int i = 0; i < a; ++i) {
+        stringstream agent_info;
+        agent_info << "Agent " << i + 1 << ": Start (" << agent_starts[i].first << ", " << agent_starts[i].second
+                   << "), Goal (" << agent_goals[i].first << ", " << agent_goals[i].second << ")";
+        cout << agent_info.str() << endl;
+        detail_output_lines.push_back(agent_info.str());
+    }
 
     // エージェント情報のマップ
     unordered_map<int, pair<pair<int, int>, pair<int, int>>> agents;
@@ -378,41 +378,37 @@ int main() {
                     }
                 }
             }
-
-            segment_scores[seg] = score;
-        }
-
-
-        unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> normalized_scores;
-        unordered_map<int, double> timestep_sums;
-
-        // 各タイムステップの合計スコアを計算
-        for (const auto& [segment, score] : segment_scores) {
-            int t1 = get<2>(segment.first);
-            timestep_sums[t1] += score;
-        }
-
-        // 正規化されたスコアを計算
-        for (const auto& [segment, score] : segment_scores) {
-            int t1 = get<2>(segment.first);
-            normalized_scores[segment] = timestep_sums[t1] > 0 ? score / timestep_sums[t1] : 0.0;
-        }
-
-        // 通過確率が k/100 以上のセグメント数 = 公開可能セグメント数　を計算
-        int num_anony_seg = 0;
-        for (const auto& [segment, normalized_score] : normalized_scores) {
-            if (normalized_score >= (k/100.0)) {
-                num_anony_seg++;
+            if (score >= (k / 100.0)) {
+                segment_scores[seg] = score;
             }
         }
+
+        // 匿名化後に公開できるセグメント数を計算
+        int num_anony_seg = segment_scores.size();
 
         // 全ての経路に含まれるセグメント数を計算
         int num_all_seg = all_segments.size();
 
+
+        // スコアの正規化とデータ残留率の計算
+        unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> normalized_scores;
+        unordered_map<int, double> timestep_sums;
+
+        // 各タイムステップの合計スコアを計算
+        for (const auto& [segment, count] : segment_counts) {
+            int t1 = get<2>(segment.first);
+            timestep_sums[t1] += count;
+        }
+
+        // 正規化されたスコアを計算
+        for (const auto& [segment, count] : segment_counts) {
+            int t1 = get<2>(segment.first);
+            normalized_scores[segment] = timestep_sums[t1] > 0 ? count / timestep_sums[t1] : 0.0;
+        }
+
         // データ残留率を計算
         double data_residual_rate = num_all_seg > 0 ? 100.0 * num_anony_seg / num_all_seg : 0.0;
         data_residual_rates[k] = data_residual_rate;
-
 
         // 結果を出力
         stringstream result_msg;
@@ -456,15 +452,15 @@ int main() {
     }
     outfile.close();
 
-    // // 経路情報をファイルに保存（最後の実行結果）
-    // ofstream pathfile("agent_paths_limited.txt");
-    // pathfile << "agent_id,x,y,time_step\n";
-    // for (const auto& [agent_id, positions] : agent_time_positions) {
-    //     for (const auto& [time_step, x, y] : positions) {
-    //         pathfile << agent_id << "," << x << "," << y << "," << time_step << "\n";
-    //     }
-    // }
-    // pathfile.close();
+    // 経路情報をファイルに保存（最後の実行結果）
+    ofstream pathfile("agent_paths_limited.txt");
+    pathfile << "agent_id,x,y,time_step\n";
+    for (const auto& [agent_id, positions] : agent_time_positions) {
+        for (const auto& [time_step, x, y] : positions) {
+            pathfile << agent_id << "," << x << "," << y << "," << time_step << "\n";
+        }
+    }
+    pathfile.close();
 
     return 0;
 }
