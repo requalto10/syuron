@@ -16,9 +16,9 @@
 using namespace std;
 
 // グリッドサイズとエージェント数の設定
-const int n = 80;
-const int m = 80;
-const int a = 300;
+const int n = 100;
+const int m = 100;
+const int a = 100;
 
 // パラメータの設定
 vector<int> k_values = {2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20}; // スコアの閾値のリスト

@@ -18,13 +18,13 @@ using namespace std;
 // グリッドサイズとエージェント数の設定
 const int n = 100;
 const int m = 100;
-const int a = 500;
+const int a = 400;
 
 // パラメータの設定
 vector<double> k_values = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0}; // スコア閾値を%で指定
 const int time_limit = 200;   // Time = 0 ~ 200 の範囲のみを描画
 const int num_solve = 1000;     // 経路探索の実行回数
-const int d = 3;              // 距離の閾値
+const int d = 5;              // 距離の閾値
 const double constant = 1.0;  // スコア計算時の定数
 
 // 乱数生成器の設定
@@ -265,7 +265,6 @@ int main() {
     auto pathfinding_end = chrono::steady_clock::now();
     auto pathfinding_time = chrono::duration_cast<chrono::milliseconds>(pathfinding_end - pathfinding_start).count();
 
-    // ここからは最後の実行結果を使用して可視化と分析を行う
 
     // 匿名化処理パートの処理時間計測開始
     auto anonymization_start = chrono::steady_clock::now();
