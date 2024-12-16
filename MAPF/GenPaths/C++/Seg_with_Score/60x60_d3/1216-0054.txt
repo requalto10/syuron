@@ -1,0 +1,406 @@
+# グリッドサイズとエージェント数の設定
+n = m = 60
+a = 300
+
+# パラメータの設定
+k_values = {2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20}  # スコアの閾値のリスト
+time_limit = 200  # Time = 0 ~ 200 の範囲のみを描画
+num_solve = 1000     # 経路探索の実行回数
+d = 3             # 距離の閾値
+constant = 1      # スコア計算時の定数
+
+
+
+For k = 2:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 21858
+Data residual rate: 73.5960%
+
+
+For k = 3:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 14491
+Data residual rate: 48.7912%
+
+
+For k = 4:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 6687
+Data residual rate: 22.5152%
+
+
+For k = 5:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 2966
+Data residual rate: 9.9865%
+
+
+For k = 6:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 1452
+Data residual rate: 4.8889%
+
+
+For k = 7:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 915
+Data residual rate: 3.0808%
+
+
+For k = 8:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 716
+Data residual rate: 2.4108%
+
+
+For k = 9:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 640
+Data residual rate: 2.1549%
+
+
+For k = 10:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 626
+Data residual rate: 2.1077%
+
+
+For k = 15:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 622
+Data residual rate: 2.0943%
+
+
+For k = 20:
+Total number of segments (num_all_seg): 29700
+Number of anonymous segments (num_anony_seg): 622
+Data residual rate: 2.0943%
+
+
+経路探索の処理時間: 286.679000 秒
+匿名化処理の処理時間: 1.311000 秒
+
+合計処理時間: 287.993000 秒
+Agent Start and Goal Positions:
+Agent 1: Start (50, 39), Goal (0, 2)
+Agent 2: Start (6, 38), Goal (10, 54)
+Agent 3: Start (16, 50), Goal (19, 4)
+Agent 4: Start (19, 32), Goal (51, 56)
+Agent 5: Start (9, 42), Goal (47, 9)
+Agent 6: Start (3, 10), Goal (42, 37)
+Agent 7: Start (31, 19), Goal (1, 55)
+Agent 8: Start (59, 20), Goal (55, 45)
+Agent 9: Start (14, 32), Goal (24, 4)
+Agent 10: Start (24, 19), Goal (27, 43)
+Agent 11: Start (23, 28), Goal (11, 57)
+Agent 12: Start (1, 5), Goal (14, 22)
+Agent 13: Start (53, 13), Goal (47, 2)
+Agent 14: Start (28, 14), Goal (3, 45)
+Agent 15: Start (42, 27), Goal (40, 9)
+Agent 16: Start (34, 36), Goal (44, 47)
+Agent 17: Start (58, 57), Goal (12, 18)
+Agent 18: Start (35, 40), Goal (6, 7)
+Agent 19: Start (53, 37), Goal (12, 37)
+Agent 20: Start (13, 51), Goal (8, 54)
+Agent 21: Start (24, 34), Goal (38, 6)
+Agent 22: Start (18, 41), Goal (17, 58)
+Agent 23: Start (56, 50), Goal (8, 5)
+Agent 24: Start (3, 28), Goal (44, 34)
+Agent 25: Start (28, 56), Goal (12, 15)
+Agent 26: Start (41, 2), Goal (21, 26)
+Agent 27: Start (30, 18), Goal (33, 34)
+Agent 28: Start (7, 11), Goal (32, 27)
+Agent 29: Start (39, 4), Goal (54, 58)
+Agent 30: Start (43, 59), Goal (56, 14)
+Agent 31: Start (53, 20), Goal (4, 44)
+Agent 32: Start (47, 40), Goal (22, 15)
+Agent 33: Start (1, 17), Goal (27, 0)
+Agent 34: Start (42, 16), Goal (35, 8)
+Agent 35: Start (46, 17), Goal (54, 21)
+Agent 36: Start (11, 20), Goal (3, 11)
+Agent 37: Start (37, 3), Goal (7, 21)
+Agent 38: Start (12, 50), Goal (9, 28)
+Agent 39: Start (23, 0), Goal (26, 28)
+Agent 40: Start (3, 9), Goal (2, 21)
+Agent 41: Start (45, 44), Goal (21, 46)
+Agent 42: Start (32, 59), Goal (25, 30)
+Agent 43: Start (12, 8), Goal (8, 26)
+Agent 44: Start (25, 47), Goal (7, 22)
+Agent 45: Start (57, 1), Goal (40, 6)
+Agent 46: Start (6, 22), Goal (17, 38)
+Agent 47: Start (47, 19), Goal (52, 54)
+Agent 48: Start (7, 16), Goal (50, 37)
+Agent 49: Start (2, 19), Goal (13, 30)
+Agent 50: Start (51, 18), Goal (51, 35)
+Agent 51: Start (33, 29), Goal (4, 53)
+Agent 52: Start (46, 31), Goal (52, 13)
+Agent 53: Start (3, 31), Goal (47, 47)
+Agent 54: Start (58, 25), Goal (0, 35)
+Agent 55: Start (54, 27), Goal (57, 23)
+Agent 56: Start (37, 54), Goal (38, 29)
+Agent 57: Start (43, 33), Goal (46, 25)
+Agent 58: Start (50, 36), Goal (6, 19)
+Agent 59: Start (12, 0), Goal (21, 38)
+Agent 60: Start (19, 43), Goal (54, 2)
+Agent 61: Start (43, 3), Goal (54, 45)
+Agent 62: Start (24, 56), Goal (32, 13)
+Agent 63: Start (10, 29), Goal (59, 49)
+Agent 64: Start (36, 46), Goal (26, 21)
+Agent 65: Start (9, 37), Goal (53, 58)
+Agent 66: Start (11, 2), Goal (10, 0)
+Agent 67: Start (36, 13), Goal (55, 16)
+Agent 68: Start (55, 37), Goal (49, 45)
+Agent 69: Start (53, 42), Goal (32, 54)
+Agent 70: Start (31, 29), Goal (2, 45)
+Agent 71: Start (22, 31), Goal (18, 36)
+Agent 72: Start (4, 0), Goal (28, 47)
+Agent 73: Start (35, 54), Goal (12, 22)
+Agent 74: Start (11, 58), Goal (48, 12)
+Agent 75: Start (45, 10), Goal (59, 41)
+Agent 76: Start (11, 21), Goal (20, 54)
+Agent 77: Start (48, 13), Goal (54, 42)
+Agent 78: Start (22, 12), Goal (24, 12)
+Agent 79: Start (5, 12), Goal (7, 50)
+Agent 80: Start (5, 23), Goal (35, 18)
+Agent 81: Start (49, 24), Goal (18, 39)
+Agent 82: Start (4, 16), Goal (9, 38)
+Agent 83: Start (16, 34), Goal (24, 16)
+Agent 84: Start (17, 57), Goal (54, 49)
+Agent 85: Start (31, 44), Goal (0, 48)
+Agent 86: Start (47, 34), Goal (13, 11)
+Agent 87: Start (31, 53), Goal (10, 14)
+Agent 88: Start (14, 7), Goal (59, 6)
+Agent 89: Start (14, 56), Goal (9, 5)
+Agent 90: Start (1, 12), Goal (39, 17)
+Agent 91: Start (32, 10), Goal (5, 15)
+Agent 92: Start (8, 9), Goal (5, 42)
+Agent 93: Start (50, 54), Goal (49, 35)
+Agent 94: Start (11, 15), Goal (48, 2)
+Agent 95: Start (1, 32), Goal (27, 30)
+Agent 96: Start (10, 51), Goal (5, 41)
+Agent 97: Start (34, 46), Goal (44, 30)
+Agent 98: Start (5, 46), Goal (29, 14)
+Agent 99: Start (28, 53), Goal (34, 38)
+Agent 100: Start (44, 59), Goal (50, 59)
+Agent 101: Start (51, 31), Goal (38, 15)
+Agent 102: Start (53, 1), Goal (1, 3)
+Agent 103: Start (5, 50), Goal (7, 29)
+Agent 104: Start (21, 39), Goal (29, 10)
+Agent 105: Start (26, 55), Goal (4, 17)
+Agent 106: Start (5, 26), Goal (19, 2)
+Agent 107: Start (39, 3), Goal (17, 18)
+Agent 108: Start (26, 24), Goal (27, 58)
+Agent 109: Start (38, 39), Goal (39, 21)
+Agent 110: Start (2, 4), Goal (58, 39)
+Agent 111: Start (14, 3), Goal (5, 57)
+Agent 112: Start (52, 39), Goal (50, 45)
+Agent 113: Start (36, 53), Goal (27, 19)
+Agent 114: Start (6, 52), Goal (5, 48)
+Agent 115: Start (51, 0), Goal (28, 32)
+Agent 116: Start (29, 2), Goal (12, 40)
+Agent 117: Start (59, 0), Goal (25, 6)
+Agent 118: Start (51, 15), Goal (1, 47)
+Agent 119: Start (58, 53), Goal (10, 21)
+Agent 120: Start (39, 53), Goal (41, 30)
+Agent 121: Start (56, 6), Goal (19, 21)
+Agent 122: Start (26, 1), Goal (17, 16)
+Agent 123: Start (57, 13), Goal (25, 8)
+Agent 124: Start (10, 59), Goal (27, 28)
+Agent 125: Start (13, 17), Goal (0, 47)
+Agent 126: Start (47, 39), Goal (48, 11)
+Agent 127: Start (0, 8), Goal (31, 47)
+Agent 128: Start (30, 32), Goal (16, 26)
+Agent 129: Start (22, 34), Goal (0, 49)
+Agent 130: Start (20, 47), Goal (25, 53)
+Agent 131: Start (2, 31), Goal (39, 20)
+Agent 132: Start (37, 4), Goal (24, 53)
+Agent 133: Start (40, 2), Goal (4, 29)
+Agent 134: Start (2, 38), Goal (16, 14)
+Agent 135: Start (30, 55), Goal (17, 3)
+Agent 136: Start (20, 28), Goal (46, 0)
+Agent 137: Start (23, 35), Goal (57, 6)
+Agent 138: Start (19, 56), Goal (40, 28)
+Agent 139: Start (33, 3), Goal (54, 16)
+Agent 140: Start (32, 48), Goal (38, 59)
+Agent 141: Start (2, 41), Goal (53, 31)
+Agent 142: Start (31, 8), Goal (36, 52)
+Agent 143: Start (46, 43), Goal (25, 2)
+Agent 144: Start (38, 20), Goal (6, 57)
+Agent 145: Start (21, 44), Goal (44, 11)
+Agent 146: Start (35, 23), Goal (30, 34)
+Agent 147: Start (22, 33), Goal (0, 46)
+Agent 148: Start (53, 22), Goal (5, 27)
+Agent 149: Start (29, 38), Goal (54, 36)
+Agent 150: Start (19, 28), Goal (11, 27)
+Agent 151: Start (10, 4), Goal (40, 1)
+Agent 152: Start (0, 55), Goal (42, 19)
+Agent 153: Start (1, 45), Goal (28, 55)
+Agent 154: Start (0, 31), Goal (39, 47)
+Agent 155: Start (38, 12), Goal (19, 10)
+Agent 156: Start (3, 37), Goal (52, 25)
+Agent 157: Start (29, 55), Goal (53, 51)
+Agent 158: Start (17, 31), Goal (2, 15)
+Agent 159: Start (17, 47), Goal (46, 53)
+Agent 160: Start (35, 6), Goal (21, 27)
+Agent 161: Start (59, 38), Goal (10, 17)
+Agent 162: Start (15, 12), Goal (23, 20)
+Agent 163: Start (21, 29), Goal (41, 0)
+Agent 164: Start (5, 4), Goal (59, 23)
+Agent 165: Start (43, 21), Goal (46, 42)
+Agent 166: Start (11, 28), Goal (28, 1)
+Agent 167: Start (50, 18), Goal (24, 54)
+Agent 168: Start (11, 50), Goal (26, 42)
+Agent 169: Start (49, 18), Goal (27, 39)
+Agent 170: Start (54, 18), Goal (53, 47)
+Agent 171: Start (42, 52), Goal (45, 36)
+Agent 172: Start (28, 31), Goal (46, 48)
+Agent 173: Start (37, 25), Goal (30, 11)
+Agent 174: Start (9, 57), Goal (36, 10)
+Agent 175: Start (13, 1), Goal (21, 18)
+Agent 176: Start (17, 55), Goal (56, 0)
+Agent 177: Start (56, 37), Goal (42, 29)
+Agent 178: Start (6, 24), Goal (15, 52)
+Agent 179: Start (3, 18), Goal (22, 42)
+Agent 180: Start (13, 8), Goal (27, 52)
+Agent 181: Start (21, 35), Goal (8, 52)
+Agent 182: Start (15, 27), Goal (49, 9)
+Agent 183: Start (38, 35), Goal (18, 47)
+Agent 184: Start (28, 17), Goal (18, 18)
+Agent 185: Start (30, 30), Goal (3, 20)
+Agent 186: Start (30, 6), Goal (39, 59)
+Agent 187: Start (8, 41), Goal (57, 3)
+Agent 188: Start (21, 13), Goal (15, 55)
+Agent 189: Start (53, 4), Goal (14, 10)
+Agent 190: Start (16, 5), Goal (30, 19)
+Agent 191: Start (53, 40), Goal (50, 32)
+Agent 192: Start (31, 41), Goal (28, 44)
+Agent 193: Start (49, 21), Goal (58, 21)
+Agent 194: Start (35, 26), Goal (5, 11)
+Agent 195: Start (32, 9), Goal (23, 32)
+Agent 196: Start (6, 30), Goal (45, 24)
+Agent 197: Start (58, 2), Goal (50, 28)
+Agent 198: Start (27, 16), Goal (32, 19)
+Agent 199: Start (1, 7), Goal (57, 31)
+Agent 200: Start (3, 29), Goal (51, 54)
+Agent 201: Start (51, 43), Goal (22, 47)
+Agent 202: Start (59, 30), Goal (55, 20)
+Agent 203: Start (1, 51), Goal (20, 52)
+Agent 204: Start (29, 19), Goal (11, 55)
+Agent 205: Start (26, 29), Goal (58, 38)
+Agent 206: Start (39, 52), Goal (19, 50)
+Agent 207: Start (3, 32), Goal (21, 8)
+Agent 208: Start (45, 58), Goal (38, 48)
+Agent 209: Start (16, 33), Goal (50, 38)
+Agent 210: Start (22, 23), Goal (19, 20)
+Agent 211: Start (7, 57), Goal (0, 15)
+Agent 212: Start (26, 0), Goal (43, 56)
+Agent 213: Start (20, 37), Goal (31, 14)
+Agent 214: Start (52, 0), Goal (56, 23)
+Agent 215: Start (5, 1), Goal (18, 34)
+Agent 216: Start (55, 12), Goal (41, 39)
+Agent 217: Start (39, 36), Goal (12, 43)
+Agent 218: Start (27, 51), Goal (57, 49)
+Agent 219: Start (0, 30), Goal (18, 35)
+Agent 220: Start (44, 26), Goal (22, 8)
+Agent 221: Start (25, 13), Goal (12, 51)
+Agent 222: Start (54, 48), Goal (0, 4)
+Agent 223: Start (27, 54), Goal (56, 9)
+Agent 224: Start (38, 26), Goal (33, 25)
+Agent 225: Start (9, 59), Goal (48, 23)
+Agent 226: Start (26, 8), Goal (20, 43)
+Agent 227: Start (26, 44), Goal (30, 0)
+Agent 228: Start (6, 2), Goal (14, 2)
+Agent 229: Start (57, 19), Goal (8, 42)
+Agent 230: Start (36, 29), Goal (29, 56)
+Agent 231: Start (43, 45), Goal (42, 5)
+Agent 232: Start (41, 35), Goal (7, 42)
+Agent 233: Start (24, 21), Goal (51, 3)
+Agent 234: Start (52, 8), Goal (3, 57)
+Agent 235: Start (16, 47), Goal (49, 13)
+Agent 236: Start (11, 4), Goal (41, 22)
+Agent 237: Start (24, 9), Goal (46, 7)
+Agent 238: Start (10, 39), Goal (35, 44)
+Agent 239: Start (21, 23), Goal (5, 47)
+Agent 240: Start (38, 33), Goal (37, 53)
+Agent 241: Start (58, 46), Goal (1, 6)
+Agent 242: Start (15, 41), Goal (30, 3)
+Agent 243: Start (3, 38), Goal (42, 48)
+Agent 244: Start (3, 19), Goal (34, 15)
+Agent 245: Start (21, 31), Goal (16, 39)
+Agent 246: Start (12, 19), Goal (56, 33)
+Agent 247: Start (33, 40), Goal (37, 23)
+Agent 248: Start (5, 30), Goal (21, 36)
+Agent 249: Start (22, 21), Goal (12, 27)
+Agent 250: Start (25, 14), Goal (58, 16)
+Agent 251: Start (19, 5), Goal (51, 12)
+Agent 252: Start (43, 31), Goal (59, 9)
+Agent 253: Start (25, 3), Goal (46, 23)
+Agent 254: Start (44, 33), Goal (33, 37)
+Agent 255: Start (39, 27), Goal (39, 22)
+Agent 256: Start (12, 34), Goal (30, 33)
+Agent 257: Start (39, 38), Goal (56, 19)
+Agent 258: Start (56, 26), Goal (21, 53)
+Agent 259: Start (24, 57), Goal (48, 30)
+Agent 260: Start (57, 8), Goal (29, 53)
+Agent 261: Start (52, 30), Goal (23, 5)
+Agent 262: Start (27, 38), Goal (41, 46)
+Agent 263: Start (34, 29), Goal (48, 55)
+Agent 264: Start (49, 2), Goal (3, 48)
+Agent 265: Start (14, 20), Goal (56, 17)
+Agent 266: Start (2, 22), Goal (40, 51)
+Agent 267: Start (2, 39), Goal (11, 38)
+Agent 268: Start (3, 53), Goal (37, 20)
+Agent 269: Start (32, 36), Goal (44, 17)
+Agent 270: Start (33, 17), Goal (54, 1)
+Agent 271: Start (58, 13), Goal (41, 3)
+Agent 272: Start (9, 50), Goal (25, 35)
+Agent 273: Start (5, 58), Goal (1, 33)
+Agent 274: Start (35, 38), Goal (52, 3)
+Agent 275: Start (20, 16), Goal (5, 35)
+Agent 276: Start (44, 43), Goal (43, 11)
+Agent 277: Start (48, 0), Goal (53, 8)
+Agent 278: Start (46, 4), Goal (8, 17)
+Agent 279: Start (17, 37), Goal (24, 18)
+Agent 280: Start (38, 24), Goal (59, 11)
+Agent 281: Start (17, 28), Goal (5, 7)
+Agent 282: Start (23, 29), Goal (41, 14)
+Agent 283: Start (31, 45), Goal (45, 31)
+Agent 284: Start (34, 51), Goal (57, 48)
+Agent 285: Start (59, 14), Goal (21, 21)
+Agent 286: Start (34, 28), Goal (29, 52)
+Agent 287: Start (33, 6), Goal (32, 35)
+Agent 288: Start (32, 29), Goal (26, 46)
+Agent 289: Start (33, 52), Goal (10, 53)
+Agent 290: Start (3, 58), Goal (35, 19)
+Agent 291: Start (25, 39), Goal (32, 0)
+Agent 292: Start (28, 25), Goal (48, 44)
+Agent 293: Start (21, 56), Goal (34, 35)
+Agent 294: Start (3, 46), Goal (4, 43)
+Agent 295: Start (48, 4), Goal (23, 36)
+Agent 296: Start (30, 31), Goal (53, 23)
+Agent 297: Start (55, 24), Goal (25, 45)
+Agent 298: Start (10, 23), Goal (14, 31)
+Agent 299: Start (20, 9), Goal (46, 24)
+Agent 300: Start (37, 30), Goal (24, 1)
+
+--- Run 1 ---
+
+--- Run 101 ---
+
+--- Run 201 ---
+
+--- Run 301 ---
+
+--- Run 401 ---
+
+--- Run 501 ---
+
+--- Run 601 ---
+
+--- Run 701 ---
+
+--- Run 801 ---
+
+--- Run 901 ---
+Time Step 0 / 99
+Time Step 50 / 99

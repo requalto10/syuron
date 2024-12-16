@@ -16,15 +16,15 @@
 using namespace std;
 
 // グリッドサイズとエージェント数の設定
-const int n = 100;
-const int m = 100;
-const int a = 200;
+const int n = 80;
+const int m = 80;
+const int a = 300;
 
 // パラメータの設定
-vector<int> k_values = {2, 3, 4, 5, 10, 15, 20}; // スコアの閾値のリスト
+vector<int> k_values = {2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20}; // スコアの閾値のリスト
 const int time_limit = 200;   // Time = 0 ~ 200 の範囲のみを描画
 const int num_solve = 1000;     // 経路探索の実行回数
-const int d = 7;              // 距離の閾値
+const int d = 3;              // 距離の閾値
 const double constant = 1.0;  // スコア計算時の定数
 
 // 乱数生成器の設定
