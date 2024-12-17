@@ -15,14 +15,14 @@
 using namespace std;
 
 // 定数定義
-const int n = 80;  // グリッドの幅
-const int m = 80;  // グリッドの高さ
-const int a = 200;  // エージェント数
+const int n = 30;  // グリッドの幅
+const int m = 30;  // グリッドの高さ
+const int a = 50;  // エージェント数
 const int time_limit = 200;  // 最大タイムステップ
-const int num_solve = 1000;  // 経路探索回数
-const int d = 5;  // 距離の閾値
+const int num_solve = 100;  // 経路探索回数
+const int d = 3;  // 距離の閾値
 const double constant = 1.0;  // スコア計算用定数
-vector<double> k_values = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 10, 30, 50};
+vector<double> k_values;
 
 // カスタムハッシュ関数
 struct PairHash {
@@ -74,7 +74,8 @@ int heuristic(pair<int, int> a, pair<int, int> b) {
 // ランダム性を加えたA*アルゴリズム
 vector<pair<int, int>> randomized_astar(pair<int, int> start, pair<int, int> goal,
                                         vector<vector<int>>& grid,
-                                        unordered_map<int, unordered_set<pair<int, int>, PairHash>>& occupied) {
+                                        unordered_map<int, unordered_set<pair<int, int>, PairHash>>& occupied,
+                                        int& collision_avoidance_count) {
     using Node = tuple<double, int, pair<int, int>, vector<pair<int, int>>>;
     priority_queue<Node, vector<Node>, greater<Node>> open_set;
 
@@ -97,6 +98,7 @@ vector<pair<int, int>> randomized_astar(pair<int, int> start, pair<int, int> goa
         }
 
         if (current == goal) {
+            cout << "衝突を回避した回数: " << collision_avoidance_count << endl;
             return path;
         }
 
@@ -116,9 +118,12 @@ vector<pair<int, int>> randomized_astar(pair<int, int> start, pair<int, int> goa
             if (0 <= nx && nx < n && 0 <= ny && ny < m) {
                 pair<int, int> neighbor = make_pair(nx, ny);
                 if (grid[ny][nx] == 0 || neighbor == goal) {
-                    if (closed_set.find(make_pair(neighbor, g_cost + 1)) == closed_set.end() &&
-                        occupied[g_cost + 1].find(neighbor) == occupied[g_cost + 1].end()) {
-                        neighbors.push_back(neighbor);
+                    if (closed_set.find(make_pair(neighbor, g_cost + 1)) == closed_set.end()) {
+                        if (occupied[g_cost + 1].find(neighbor) == occupied[g_cost + 1].end()) {
+                            neighbors.push_back(neighbor);
+                        } else {
+                            collision_avoidance_count++;  // 衝突回避をカウント
+                        }
                     }
                 }
             }
@@ -136,14 +141,18 @@ vector<pair<int, int>> randomized_astar(pair<int, int> start, pair<int, int> goa
         }
     }
 
+    cout << "衝突を回避した回数: " << collision_avoidance_count << endl;
     return {};
 }
 
 int main() {
     auto total_start_time = chrono::steady_clock::now();
 
-    vector<string> output_lines;
+    for (double k = 1.0; k <= 50.0; k += 0.5) {
+        k_values.push_back(k);
+    }
 
+    vector<string> output_lines;
 
     // グリッドとエージェントの初期化
     vector<vector<int>> grid(m, vector<int>(n, 0));
@@ -181,10 +190,6 @@ int main() {
     cout << param_info.str();
     output_lines.push_back(param_info.str());
 
-
-
-
-
     unordered_map<int, pair<pair<int, int>, pair<int, int>>> agents;
     for (int i = 0; i < a; ++i) {
         agents[i + 1] = make_pair(agent_starts[i], agent_goals[i]);
@@ -194,9 +199,10 @@ int main() {
 
     // 経路探索実行
     vector<unordered_map<int, vector<pair<int, int>>>> all_agent_paths_runs;
+    int total_collision_avoidance_count = 0;  // 全エージェントの衝突回避回数の合計
 
     for (int run = 0; run < num_solve; ++run) {
-        if ( run % 100 == 0) {
+        if (run % 100 == 0) {
             stringstream run_info;
             run_info << "\n--- Run " << run + 1 << " ---";
             cout << run_info.str() << endl;
@@ -207,7 +213,10 @@ int main() {
         unordered_map<int, vector<pair<int, int>>> agent_paths;
 
         for (auto& [agent_id, positions] : agents) {
-            auto path = randomized_astar(positions.first, positions.second, grid, reserved);
+            int collision_avoidance_count = 0;
+            auto path = randomized_astar(positions.first, positions.second, grid, reserved, collision_avoidance_count);
+            total_collision_avoidance_count += collision_avoidance_count;
+
             if (path.empty()) {
                 stringstream error_msg;
                 error_msg << "Agent " << agent_id << " の経路が見つかりませんでした。";
@@ -225,6 +234,7 @@ int main() {
         all_agent_paths_runs.push_back(agent_paths);
     }
 
+    cout << "全エージェントの衝突を回避した回数の合計: " << total_collision_avoidance_count << endl;
 
     //k匿名化
     unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> segment_counts;
