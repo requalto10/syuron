@@ -11,7 +11,6 @@
 #include <iomanip>
 #include <sstream>
 #include <functional>
-#include <cmath>
 
 using namespace std;
 
@@ -99,7 +98,7 @@ vector<pair<int, int>> randomized_astar(pair<int, int> start, pair<int, int> goa
         }
 
         if (current == goal) {
-            // cout << "衝突を回避した回数: " << collision_avoidance_count << endl;
+            cout << "衝突を回避した回数: " << collision_avoidance_count << endl;
             return path;
         }
 
@@ -142,72 +141,7 @@ vector<pair<int, int>> randomized_astar(pair<int, int> start, pair<int, int> goa
         }
     }
 
-    // cout << "衝突を回避した回数: " << collision_avoidance_count << endl;
-    return {};
-}
-
-vector<pair<int, int>> randomized_astar_new(pair<int, int> start, pair<int, int> goal,
-                                            vector<vector<int>>& grid) {
-    using Node = tuple<double, int, pair<int, int>, vector<pair<int, int>>>;
-    priority_queue<Node, vector<Node>, greater<Node>> open_set;
-
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_real_distribution<> dis_noise(0.0, 10.0);
-
-    double noise = dis_noise(gen);
-    open_set.push(make_tuple(heuristic(start, goal) + noise, 0, start, vector<pair<int, int>>{start}));
-    unordered_set<pair<pair<int, int>, int>, PairHash> closed_set;
-
-    const int max_time = 500;  // 最大探索時間
-
-    while (!open_set.empty()) {
-        auto [f_cost, g_cost, current, path] = open_set.top();
-        open_set.pop();
-
-        if (g_cost > max_time) {
-            return {};  // タイムアウト
-        }
-
-        if (current == goal) {
-            return path;
-        }
-
-        if (closed_set.find(make_pair(current, g_cost)) != closed_set.end()) {
-            continue;
-        }
-
-        closed_set.insert(make_pair(current, g_cost));
-
-        vector<pair<int, int>> neighbors;
-        vector<pair<int, int>> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-        for (auto& dir : directions) {
-            int nx = current.first + dir.first;
-            int ny = current.second + dir.second;
-
-            if (0 <= nx && nx < n && 0 <= ny && ny < m) {
-                pair<int, int> neighbor = make_pair(nx, ny);
-                if (grid[ny][nx] == 0 || neighbor == goal) {
-                    if (closed_set.find(make_pair(neighbor, g_cost + 1)) == closed_set.end()) {
-                        neighbors.push_back(neighbor);
-                    }
-                }
-            }
-        }
-
-        // 隣接ノードの順序をランダムに
-        shuffle(neighbors.begin(), neighbors.end(), gen);
-
-        for (auto& neighbor : neighbors) {
-            vector<pair<int, int>> new_path = path;
-            new_path.push_back(neighbor);
-            double noise = dis_noise(gen);
-            open_set.push(make_tuple(g_cost + 1 + heuristic(neighbor, goal) + noise,
-                                     g_cost + 1, neighbor, new_path));
-        }
-    }
-
+    cout << "衝突を回避した回数: " << collision_avoidance_count << endl;
     return {};
 }
 
@@ -265,7 +199,6 @@ int main() {
 
     // 経路探索実行
     vector<unordered_map<int, vector<pair<int, int>>>> all_agent_paths_runs;
-    vector<unordered_map<int, vector<pair<int, int>>>> all_agent_paths_runs_new;
     int total_collision_avoidance_count = 0;  // 全エージェントの衝突回避回数の合計
 
     for (int run = 0; run < num_solve; ++run) {
@@ -278,7 +211,6 @@ int main() {
 
         unordered_map<int, unordered_set<pair<int, int>, PairHash>> reserved;
         unordered_map<int, vector<pair<int, int>>> agent_paths;
-        unordered_map<int, vector<pair<int, int>>> agent_paths_new;
 
         for (auto& [agent_id, positions] : agents) {
             int collision_avoidance_count = 0;
@@ -297,104 +229,12 @@ int main() {
             for (size_t t = 0; t < path.size(); ++t) {
                 reserved[t].insert(path[t]);
             }
-
-            // 新しい関数での経路探索
-            auto path_new = randomized_astar_new(positions.first, positions.second, grid);
-            if (path_new.empty()) {
-                stringstream error_msg;
-                error_msg << "Agent " << agent_id << " の経路が見つかりませんでした（新しい関数）。";
-                cout << error_msg.str() << endl;
-                output_lines.push_back(error_msg.str());
-                continue;
-            }
-            agent_paths_new[agent_id] = path_new;
         }
 
         all_agent_paths_runs.push_back(agent_paths);
-        all_agent_paths_runs_new.push_back(agent_paths_new);
     }
 
     cout << "全エージェントの衝突を回避した回数の合計: " << total_collision_avoidance_count << endl;
-
-    // セグメントの利用効率（通過確率の分布）の計算
-    auto calculate_segment_efficiency = [](const vector<unordered_map<int, vector<pair<int, int>>>>& all_paths) {
-        unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> segment_counts;
-        unordered_map<int, unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash>> agent_normalized_scores;
-
-        // セグメントスコアの計算
-        for (auto& agent_paths : all_paths) {
-            for (auto& [agent_id, path] : agent_paths) {
-                for (size_t t = 0; t < path.size() - 1; ++t) {
-                    auto segment = make_pair(
-                        make_tuple(path[t].first, path[t].second, t),
-                        make_tuple(path[t + 1].first, path[t + 1].second, t + 1)
-                    );
-                    segment_counts[segment]++;
-                }
-            }
-        }
-
-        // エージェントごとにセグメントスコアを正規化
-        for (auto& agent_paths : all_paths) {
-            for (auto& [agent_id, path] : agent_paths) {
-                unordered_map<int, double> timestep_sums;
-
-                // タイムステップごとのスコア合計を計算
-                for (size_t t = 0; t < path.size() - 1; ++t) {
-                    auto segment = make_pair(
-                        make_tuple(path[t].first, path[t].second, t),
-                        make_tuple(path[t + 1].first, path[t + 1].second, t + 1)
-                    );
-                    timestep_sums[t] += segment_counts[segment];
-                }
-
-                // セグメントスコアの正規化
-                for (size_t t = 0; t < path.size() - 1; ++t) {
-                    auto segment = make_pair(
-                        make_tuple(path[t].first, path[t].second, t),
-                        make_tuple(path[t + 1].first, path[t + 1].second, t + 1)
-                    );
-                    double sum = timestep_sums[t];
-                    agent_normalized_scores[agent_id][segment] =
-                        (sum > 0) ? (segment_counts[segment] / sum) : 0.0;
-                }
-            }
-        }
-
-        // 全エージェントのセグメントスコアを集計
-        unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> segment_total_probabilities;
-        for (auto& agent_scores : agent_normalized_scores) {
-            for (auto& [segment, score] : agent_scores.second) {
-                segment_total_probabilities[segment] += score;
-            }
-        }
-
-        // 分散と標準偏差の計算
-        double total_segments = segment_total_probabilities.size();
-        double total_score = 0;
-        for (auto& [segment, score] : segment_total_probabilities) {
-            total_score += score;
-        }
-
-        double mean_score = total_score / total_segments;
-
-        double variance = 0;
-        for (auto& [segment, score] : segment_total_probabilities) {
-            variance += (score - mean_score) * (score - mean_score);
-        }
-        variance /= total_segments;
-
-        double standard_deviation = sqrt(variance);
-
-        cout << "セグメントスコアの分散: " << variance << endl;
-        cout << "セグメントスコアの標準偏差: " << standard_deviation << endl;
-    };
-
-    cout << "\n衝突回避ありのセグメント利用効率:" << endl;
-    calculate_segment_efficiency(all_agent_paths_runs);
-
-    cout << "\n衝突回避なしのセグメント利用効率:" << endl;
-    calculate_segment_efficiency(all_agent_paths_runs_new);
 
     //k匿名化
     unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> segment_counts;
@@ -441,8 +281,8 @@ int main() {
         }
     }
 
-    // 全エージェントのセグメントスコアを算出
-    unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> segment_total_probabilities;
+    // 全エージェントのk値を算出
+    unordered_map<pair<tuple<int, int, int>, tuple<int, int, int>>, double, PairHash> segment_max_probabilities;
     int total_segment_count = 0;  // 全セグメント数（重複カウント）
 
     for (auto& agent_paths : all_agent_paths_runs) {
@@ -452,6 +292,9 @@ int main() {
                     make_tuple(path[t].first, path[t].second, t),
                     make_tuple(path[t + 1].first, path[t + 1].second, t + 1)
                 );
+                // セグメントごとの最大通過確率を計算
+                segment_max_probabilities[segment] = max(segment_max_probabilities[segment],
+                                                        agent_normalized_scores[agent_id][segment]);
 
                 // 全セグメント数をカウント（重複を含む）
                 total_segment_count++;
@@ -463,9 +306,9 @@ int main() {
     for (double k_value : k_values) {
         int retained_segment_count = 0;
 
-        for (auto& [segment, total_probability] : segment_total_probabilities) {
+        for (auto& [segment, max_probability] : segment_max_probabilities) {
             // k値を超えるセグメント数をカウント
-            if (total_probability >= k_value) {
+            if (max_probability >= k_value) {
                 retained_segment_count++;
             }
         }
@@ -480,6 +323,13 @@ int main() {
         output_lines.push_back(k_anonymization_output.str());
     }
 
+
+    //     // デバッグ: 正規化スコアの出力
+    // for (auto& [segment, probability] : segment_max_probabilities) {
+    //     cout << "Segment: (" << get<0>(segment.first) << "," << get<1>(segment.first) << "," << get<2>(segment.first)
+    //         << ") -> (" << get<0>(segment.second) << "," << get<1>(segment.second) << "," << get<2>(segment.second)
+    //         << "), Max Probability: " << probability << endl;
+    // }
 
 
     auto total_end_time = chrono::steady_clock::now();
