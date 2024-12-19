@@ -13,6 +13,8 @@
 #include <ctime>
 #include <limits>
 #include <cassert>
+#include <string>
+
 using namespace std;
 
 struct Position {
@@ -31,7 +33,6 @@ struct Segment {
 struct SegmentHash {
     std::size_t operator()(const Segment &s) const {
         std::size_t h = 0;
-        // Hash組み合わせは簡易的
         h ^= std::hash<int>()(s.x1) + 0x9e3779b97f4a7c16ULL;
         h ^= std::hash<int>()(s.y1) + 0x9e3779b97f4a7c16ULL;
         h ^= std::hash<int>()(s.x2) + 0x9e3779b97f4a7c16ULL;
@@ -56,14 +57,13 @@ struct Path {
 };
 
 // グローバルパラメータ
-static int m; // グリッドサイズm×m
+static int m; // グリッドサイズ
 static int a; // エージェント数
-static int num_solve; // 各設定での経路探索回数
-static int d; // セグメント影響範囲
+static int num_solve; // 同一問題での探索回数
+static int d; // セグメント影響考慮範囲
 static vector<double> k_values; // k閾値
-
 static vector<Position> starts, goals; 
-static int collision_avoidance_count_with = 0;
+static int collision_avoidance_count_with = 0; // 衝突回避ありでの衝突回避回数
 static std::mt19937_64 rng((unsigned long)time(NULL));
 
 bool is_free(int x,int y) {
@@ -96,7 +96,6 @@ Path a_star_single_agent(int sx,int sy,int gx,int gy,
             int cx=x, cy=y;
             for(int i=length;i>=0;i--){
                 if(cx<0||cx>=m||cy<0||cy>=m) {
-                    // 不正状態はスキップ
                     path.nodes.clear();
                     return path;
                 }
@@ -137,7 +136,6 @@ Path a_star_single_agent(int sx,int sy,int gx,int gy,
     return empty_path;
 }
 
-// 衝突回避ありMAPF（簡易実装）
 vector<Path> solve_mapf_with_collision_avoidance() {
     vector<Path> solutions(a);
     ConflictConstraint constraints;
@@ -149,31 +147,25 @@ vector<Path> solve_mapf_with_collision_avoidance() {
             trial++;
             Path p = a_star_single_agent(starts[i].x, starts[i].y, goals[i].x, goals[i].y, constraints);
             if(p.nodes.empty()){
-                // 経路見つからず
                 continue;
             }
-            // 衝突チェック
             bool collision_found = false;
             for(int j=0;j<i;j++){
                 const Path &op = solutions[j];
                 if(op.nodes.empty() || p.nodes.empty()) {
-                    // 空経路なら衝突しようがないが、空経路はありえないはず
                     continue;
                 }
 
                 int maxT = (int)max(p.nodes.size(), op.nodes.size());
                 for(int t=0; t<maxT; t++){
                     int tx, ty, ox, oy;
-                    if(p.nodes.empty()) break; // 念のため
-                    if(op.nodes.empty()) break; 
-                    
-                    // pのt番目または最後
+
                     if(t<(int)p.nodes.size()){
                         tx=p.nodes[t].x; ty=p.nodes[t].y;
                     } else {
                         tx=p.nodes.back().x; ty=p.nodes.back().y;
                     }
-                    // opのt番目または最後
+
                     if(t<(int)op.nodes.size()){
                         ox=op.nodes[t].x; oy=op.nodes[t].y;
                     } else {
@@ -188,7 +180,6 @@ vector<Path> solve_mapf_with_collision_avoidance() {
                 }
             }
             if(!collision_found){
-                // 衝突なし
                 solutions[i]=p;
                 for(int t=0; t<(int)p.nodes.size(); t++){
                     constraints.not_allowed[t].insert({p.nodes[t].x, p.nodes[t].y});
@@ -198,9 +189,6 @@ vector<Path> solve_mapf_with_collision_avoidance() {
             }
         }
         if(!found_path){
-            // 経路が見つからなかった場合、このエージェントから先は空経路
-            // 全体的に満足行く解がないが、ひとまず返す
-            // 実務的にはここで再試行やパラメータ変更を検討すべき
             return solutions;
         }
     }
@@ -208,13 +196,11 @@ vector<Path> solve_mapf_with_collision_avoidance() {
     return solutions;
 }
 
-// 衝突回避なしMAPF
 vector<Path> solve_mapf_without_collision_avoidance() {
     ConflictConstraint no_constraints;
     vector<Path> solutions(a);
     for(int i=0;i<a;i++){
         Path p = a_star_single_agent(starts[i].x, starts[i].y, goals[i].x, goals[i].y, no_constraints);
-        // pがemptyならそのまま続行するが、この場合も後続処理でセグメントがなくてもOKなようにする
         solutions[i] = p;
     }
     return solutions;
@@ -239,7 +225,8 @@ struct AgentSolutionSegments {
 
 static double segment_distance(const Segment &s1, const Segment &s2) {
     double dx = s1.cx - s2.cx;
-    double dy = s1.cy - s2.cy;
+    double dy = s2.cy - s1.cy;
+    dy = s1.cy - s2.cy;
     return sqrt(dx*dx + dy*dy);
 }
 
@@ -251,7 +238,6 @@ AgentSolutionSegments extract_segments(const vector<vector<Path>> &solutions_set
         result.agent_segments[ag].resize(solutions_set.size());
         for(int si=0; si<(int)solutions_set.size(); si++){
             const Path &P = solutions_set[si][ag];
-            // Pが空または1ノードしかない場合はセグメントなし
             for(int t=0; t+1<(int)P.nodes.size(); t++){
                 Segment seg;
                 seg.x1 = P.nodes[t].x;
@@ -287,7 +273,6 @@ static vector<vector<double>> compute_pass_probabilities(
 ) {
     vector<Segment> all_segments_vec = to_vector(ass.all_segments_set);
     if(all_segments_vec.empty()) {
-        // セグメントがない場合、確率計算は全て0
         return vector<vector<double>>(a, vector<double>(0));
     }
 
@@ -297,7 +282,6 @@ static vector<vector<double>> compute_pass_probabilities(
     }
 
     vector<vector<int>> count(a,vector<int>((int)all_segments_vec.size(),0));
-    // agentが通ったseg_idを記録する必要が特にないので削除可能
 
     for(int ag=0;ag<a;ag++){
         for(int si=0; si<(int)solutions_set.size(); si++){
@@ -342,11 +326,6 @@ static vector<vector<double>> compute_pass_probabilities(
 
     vector<vector<double>> probability(a,vector<double>((int)all_segments_vec.size(),0.0));
 
-    // time_stepごとの正規化
-    // agentごとに最大time_step検索
-    // score>0のセグメントのみ正規化対象
-    // 1時間ステップ内で合計が1になるよう正規化
-    // time_stepはsegに格納
     int max_t_all=0;
     for (auto &seg: all_segments_vec) {
         if(seg.time_step > max_t_all) max_t_all=seg.time_step;
@@ -381,9 +360,8 @@ static vector<double> compute_data_retention(
     int n_seg = (int)all_segments_vec.size();
     vector<double> ret;
     if(n_seg==0) {
-        // セグメントが無い場合は全てのk_valueに対して0を返す
         for(auto kv: k_values) {
-            (void)kv; // unused
+            (void)kv; 
             ret.push_back(0.0);
         }
         return ret;
@@ -406,8 +384,9 @@ static vector<double> compute_data_retention(
                 count_over++;
             }
         }
+        // %表示のため100倍
         double retention = 0.0;
-        if(n_seg>0) retention = (double)count_over/(double)n_seg;
+        if(n_seg>0) retention = ((double)count_over/(double)n_seg)*100.0;
         ret.push_back(retention);
     }
     return ret;
@@ -424,7 +403,6 @@ static pair<double,double> compute_variance_std(
     }
 
     if(all_p.empty()){
-        // 全くセグメントが無い場合など
         return {0.0,0.0};
     }
 
@@ -445,12 +423,20 @@ int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    // パラメータをコード内で指定
-    m = 40;
-    a =30;       // aを増やしてもSegfaultしないように修正済み
+    // 指定されたパラメータ
+    m = 60;
+    a = 100;       
     num_solve = 100;
     d = 2;
     k_values = {0.1, 0.2, 0.3};
+
+    // 出力ファイル名生成
+    string filename = "m" + to_string(m) 
+                    + "_a" + to_string(a) 
+                    + "_num" + to_string(num_solve) 
+                    + "_d" + to_string(d) 
+                    + ".txt";
+    freopen(filename.c_str(), "w", stdout);
 
     starts.resize(a);
     goals.resize(a);
@@ -462,11 +448,9 @@ int main(){
     vector<vector<Path>> solutions_with = run_solutions(true);
     vector<vector<Path>> solutions_without = run_solutions(false);
 
-    // セグメント抽出
     AgentSolutionSegments ass_with = extract_segments(solutions_with);
     AgentSolutionSegments ass_without = extract_segments(solutions_without);
 
-    // 通過確率計算
     vector<vector<double>> probability_with = compute_pass_probabilities(solutions_with, ass_with);
     vector<vector<double>> probability_without = compute_pass_probabilities(solutions_without, ass_without);
 
@@ -479,15 +463,42 @@ int main(){
     auto [var_with, std_with] = compute_variance_std(probability_with);
     auto [var_without, std_without] = compute_variance_std(probability_without);
 
-    cout << "Collision avoidance count (with): " << collision_avoidance_count_with << "\n";
-    cout << "Data retention (with):";
+
+    // 出力内容
+    cout << "【パラメータ情報】\n";
+    cout << "m = " << m << "\n";
+    cout << "a = " << a << "\n";
+    cout << "num_solve = " << num_solve << "\n";
+    cout << "d = " << d << "\n";
+
+    cout << "\nk_values(閾値) =";
+    for (auto kv : k_values) {
+        cout << " " << kv;
+    }
+    cout << "\n";
+
+    cout << "\n【結果出力】\n";
+    cout << "■ 衝突回避あり探索で発生した衝突回避回数: " << collision_avoidance_count_with << "\n";
+    cout << "   (衝突を回避するために追加した制約の発生回数)\n\n";
+
+    cout << "■ データ残留率(%)について:\n";
+    cout << "   k_values:";
+    for(auto kv:k_values) cout << " " << kv;
+    cout << "\n\n";
+
+    cout << "   (衝突回避ありの場合)\n";
+    cout << "   データ残留率(%):";
     for(auto v:data_retention_with) cout<<" "<<v;
-    cout<<"\n";
-    cout << "Data retention (without):";
+    cout << "\n   (k値を超えるセグメント割合を%表示)\n\n";
+
+    cout << "   (衝突回避なしの場合)\n";
+    cout << "   データ残留率(%):";
     for(auto v:data_retention_without) cout<<" "<<v;
-    cout<<"\n";
-    cout << "Variance (with): " << var_with << ", StdDev (with): " << std_with << "\n";
-    cout << "Variance (without): " << var_without << ", StdDev (without): " << std_without << "\n";
+    cout << "\n   (k値を超えるセグメント割合を%表示)\n\n";
+
+    cout << "■ セグメント通過確率の分散・標準偏差:\n";
+    cout << "   (衝突回避あり) 分散=" << var_with << ", 標準偏差=" << std_with << "\n";
+    cout << "   (衝突回避なし) 分散=" << var_without << ", 標準偏差=" << std_without << "\n";
 
     return 0;
 }
