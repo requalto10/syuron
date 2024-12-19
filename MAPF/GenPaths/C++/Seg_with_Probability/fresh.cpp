@@ -66,7 +66,7 @@ static vector<Position> starts, goals;
 static int collision_avoidance_count_with = 0; 
 static std::mt19937_64 rng((unsigned long)time(NULL));
 
-// ヒューリスティック用乱数範囲: 0 ~ 2*m/5
+// ヒューリスティック用乱数範囲: 0 ~ m/5
 // 後で使用するため関数外に保持
 static double noise_max; 
 static uniform_real_distribution<double> dist; 
@@ -77,7 +77,7 @@ bool is_free(int x,int y) {
 
 double heuristic(int x,int y,int gx,int gy) {
     double base = abs(x - gx) + abs(y - gy);
-    // 0 ~ (2*m/5)の範囲で乱数生成
+    // 0 ~ (m/5)の範囲で乱数生成
     double noise = dist(rng);
     return base + noise;
 }
@@ -447,14 +447,14 @@ int main(){
     cin.tie(nullptr);
 
     // パラメータ例(任意に変更可)
-    m = 120;
-    a = 500;       
-    num_solve = 1000;
+    m = 100;
+    a = 100;
+    num_solve = 200;
     d = 3;
     k_values = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.2};
 
-    // ノイズ範囲設定: 0 ~ 2*m/5
-    noise_max = 2.0*m/5.0; 
+    // ノイズ範囲設定: 0 ~ m/5
+    noise_max = m/5.0; 
     dist = uniform_real_distribution<double>(0.0, noise_max);
 
     string filename = "m" + to_string(m) 
