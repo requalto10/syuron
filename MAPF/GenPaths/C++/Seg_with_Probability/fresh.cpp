@@ -57,14 +57,19 @@ struct Path {
 };
 
 // グローバルパラメータ
-static int m; // グリッドサイズ
-static int a; // エージェント数
-static int num_solve; // 同一問題での探索回数
-static int d; // セグメント影響考慮範囲
-static vector<double> k_values; // k閾値
+static int m; 
+static int a; 
+static int num_solve;
+static int d; 
+static vector<double> k_values; 
 static vector<Position> starts, goals; 
-static int collision_avoidance_count_with = 0; // 衝突回避ありでの衝突回避回数
+static int collision_avoidance_count_with = 0; 
 static std::mt19937_64 rng((unsigned long)time(NULL));
+
+// ヒューリスティック用乱数範囲: 0 ~ 2*m/5
+// 後で使用するため関数外に保持
+static double noise_max; 
+static uniform_real_distribution<double> dist; 
 
 bool is_free(int x,int y) {
     return (0 <= x && x < m && 0 <= y && y < m);
@@ -72,8 +77,9 @@ bool is_free(int x,int y) {
 
 double heuristic(int x,int y,int gx,int gy) {
     double base = abs(x - gx) + abs(y - gy);
-    std::uniform_real_distribution<double> dist(0.0,1.0);
-    return base + dist(rng);
+    // 0 ~ (2*m/5)の範囲で乱数生成
+    double noise = dist(rng);
+    return base + noise;
 }
 
 Path a_star_single_agent(int sx,int sy,int gx,int gy,
@@ -209,6 +215,10 @@ vector<Path> solve_mapf_without_collision_avoidance() {
 static vector<vector<Path>> run_solutions(bool with_collision) {
     vector<vector<Path>> solutions_set(num_solve);
     for(int i=0;i<num_solve;i++){
+        // 進捗状況出力（標準エラー出力）
+        cerr << (with_collision?"[With Collision]":"[Without Collision]") 
+             << " Solving " << i+1 << "/" << num_solve << "...\n";
+
         if(with_collision) {
             solutions_set[i] = solve_mapf_with_collision_avoidance();
         } else {
@@ -225,8 +235,7 @@ struct AgentSolutionSegments {
 
 static double segment_distance(const Segment &s1, const Segment &s2) {
     double dx = s1.cx - s2.cx;
-    double dy = s2.cy - s1.cy;
-    dy = s1.cy - s2.cy;
+    double dy = s1.cy - s2.cy;
     return sqrt(dx*dx + dy*dy);
 }
 
@@ -353,6 +362,47 @@ static vector<vector<double>> compute_pass_probabilities(
     return probability;
 }
 
+
+static pair<double,double> compute_variance_std_of_kvalues(
+    const vector<vector<double>> &probability
+) {
+    if(probability.empty()) {
+        return {0.0, 0.0};
+    }
+    int a = (int)probability.size();
+    int n_seg = 0;
+    for (int ag=0; ag<a; ag++){
+        n_seg = max(n_seg, (int)probability[ag].size());
+    }
+    if(n_seg==0) return {0.0, 0.0};
+
+    vector<double> k_values_of_segments(n_seg,0.0);
+    for(int sid=0; sid<n_seg; sid++){
+        double sum_p=0.0;
+        for(int ag=0; ag<a; ag++){
+            if(sid<(int)probability[ag].size()) {
+                sum_p += probability[ag][sid];
+            }
+        }
+        k_values_of_segments[sid]=sum_p;
+    }
+
+    double mean=0.0;
+    for(auto val: k_values_of_segments) mean+=val;
+    mean /= (double)k_values_of_segments.size();
+
+    double var=0.0;
+    for(auto val:k_values_of_segments){
+        double diff=val-mean;
+        var+=diff*diff;
+    }
+    var/=(double)k_values_of_segments.size();
+    double stddev=sqrt(var);
+
+    return {var,stddev};
+}
+
+
 static vector<double> compute_data_retention(
     const vector<vector<double>> &probability,
     const vector<Segment> &all_segments_vec
@@ -384,59 +434,38 @@ static vector<double> compute_data_retention(
                 count_over++;
             }
         }
-        // %表示のため100倍
         double retention = 0.0;
-        if(n_seg>0) retention = ((double)count_over/(double)n_seg)*100.0;
+        if(n_seg>0) retention = ((double)count_over/(double)n_seg)*100.0; 
         ret.push_back(retention);
     }
     return ret;
 }
 
-static pair<double,double> compute_variance_std(
-    const vector<vector<double>> &probability
-) {
-    vector<double> all_p;
-    for(auto &pv: probability) {
-        for(auto val: pv){
-            all_p.push_back(val);
-        }
-    }
-
-    if(all_p.empty()){
-        return {0.0,0.0};
-    }
-
-    double mean=0.0;
-    for(auto val: all_p) mean+=val;
-    mean/= (double)all_p.size();
-    double var=0.0;
-    for(auto val: all_p){
-        double diff=(val-mean);
-        var+= diff*diff;
-    }
-    var/= (double)all_p.size();
-    double stddev = sqrt(var);
-    return {var,stddev};
-}
 
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    // 指定されたパラメータ
-    m = 60;
-    a = 100;       
-    num_solve = 100;
-    d = 2;
-    k_values = {0.1, 0.2, 0.3};
+    // パラメータ例(任意に変更可)
+    m = 120;
+    a = 500;       
+    num_solve = 1000;
+    d = 3;
+    k_values = {0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.2};
 
-    // 出力ファイル名生成
+    // ノイズ範囲設定: 0 ~ 2*m/5
+    noise_max = 2.0*m/5.0; 
+    dist = uniform_real_distribution<double>(0.0, noise_max);
+
     string filename = "m" + to_string(m) 
                     + "_a" + to_string(a) 
                     + "_num" + to_string(num_solve) 
                     + "_d" + to_string(d) 
                     + ".txt";
     freopen(filename.c_str(), "w", stdout);
+
+    // 標準エラー出力で進捗表示
+    cerr << "Starting setup...\n";
 
     starts.resize(a);
     goals.resize(a);
@@ -445,26 +474,34 @@ int main(){
         goals[i] = { (int)(rng()%m), (int)(rng()%m) };
     }
 
+    cerr << "Running solutions with collision avoidance...\n";
     vector<vector<Path>> solutions_with = run_solutions(true);
+
+    cerr << "Running solutions without collision avoidance...\n";
     vector<vector<Path>> solutions_without = run_solutions(false);
 
+    cerr << "Extracting segments...\n";
     AgentSolutionSegments ass_with = extract_segments(solutions_with);
     AgentSolutionSegments ass_without = extract_segments(solutions_without);
 
+    cerr << "Computing probabilities...\n";
     vector<vector<double>> probability_with = compute_pass_probabilities(solutions_with, ass_with);
     vector<vector<double>> probability_without = compute_pass_probabilities(solutions_without, ass_without);
 
     vector<Segment> all_segments_with = to_vector(ass_with.all_segments_set);
     vector<Segment> all_segments_without = to_vector(ass_without.all_segments_set);
 
+    cerr << "Computing data retention...\n";
     vector<double> data_retention_with = compute_data_retention(probability_with, all_segments_with);
     vector<double> data_retention_without = compute_data_retention(probability_without, all_segments_without);
 
-    auto [var_with, std_with] = compute_variance_std(probability_with);
-    auto [var_without, std_without] = compute_variance_std(probability_without);
+    cerr << "Computing variance and std of k-values...\n";
+    auto [var_with, std_with] = compute_variance_std_of_kvalues(probability_with);
+    auto [var_without, std_without] = compute_variance_std_of_kvalues(probability_without);
 
+    cerr << "All computations done. Writing results to file...\n";
 
-    // 出力内容
+    // 以下、出力
     cout << "【パラメータ情報】\n";
     cout << "m = " << m << "\n";
     cout << "a = " << a << "\n";
@@ -478,8 +515,7 @@ int main(){
     cout << "\n";
 
     cout << "\n【結果出力】\n";
-    cout << "■ 衝突回避あり探索で発生した衝突回避回数: " << collision_avoidance_count_with << "\n";
-    cout << "   (衝突を回避するために追加した制約の発生回数)\n\n";
+    cout << "■ 衝突回避あり探索で発生した衝突回避回数: " << collision_avoidance_count_with << "\n\n";
 
     cout << "■ データ残留率(%)について:\n";
     cout << "   k_values:";
@@ -489,16 +525,18 @@ int main(){
     cout << "   (衝突回避ありの場合)\n";
     cout << "   データ残留率(%):";
     for(auto v:data_retention_with) cout<<" "<<v;
-    cout << "\n   (k値を超えるセグメント割合を%表示)\n\n";
+    cout << "\n\n";
 
     cout << "   (衝突回避なしの場合)\n";
     cout << "   データ残留率(%):";
     for(auto v:data_retention_without) cout<<" "<<v;
-    cout << "\n   (k値を超えるセグメント割合を%表示)\n\n";
+    cout << "\n\n";
 
-    cout << "■ セグメント通過確率の分散・標準偏差:\n";
+    cout << "■ セグメントk値の分散・標準偏差:\n";
     cout << "   (衝突回避あり) 分散=" << var_with << ", 標準偏差=" << std_with << "\n";
     cout << "   (衝突回避なし) 分散=" << var_without << ", 標準偏差=" << std_without << "\n";
+
+    cerr << "Done.\n";
 
     return 0;
 }
